@@ -136,12 +136,12 @@ public class System extends javax.swing.JFrame {
         jLabel31 = new javax.swing.JLabel();
         jLabel33 = new javax.swing.JLabel();
         jButton23 = new javax.swing.JButton();
-        jTextField2 = new javax.swing.JTextField();
+        jPanel8 = new javax.swing.JPanel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        setMinimumSize(new java.awt.Dimension(1231, 610));
-        setPreferredSize(new java.awt.Dimension(1240, 640));
-        setSize(new java.awt.Dimension(1231, 640));
+        setMinimumSize(new java.awt.Dimension(1231, 640));
+        setPreferredSize(new java.awt.Dimension(1240, 650));
+        setSize(new java.awt.Dimension(1231, 650));
         getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         jPanel1.setBackground(new java.awt.Color(51, 51, 255));
@@ -944,10 +944,22 @@ public class System extends javax.swing.JFrame {
 
         jTabbedPane1.addTab("tab6", jPanel7);
 
-        getContentPane().add(jTabbedPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(240, 200, 1000, 420));
+        getContentPane().add(jTabbedPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(230, 180, 1000, 420));
 
-        jTextField2.setText("jTextField2");
-        getContentPane().add(jTextField2, new org.netbeans.lib.awtextra.AbsoluteConstraints(1000, 60, -1, -1));
+        jPanel8.setBackground(new java.awt.Color(51, 51, 255));
+
+        javax.swing.GroupLayout jPanel8Layout = new javax.swing.GroupLayout(jPanel8);
+        jPanel8.setLayout(jPanel8Layout);
+        jPanel8Layout.setHorizontalGroup(
+            jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 1230, Short.MAX_VALUE)
+        );
+        jPanel8Layout.setVerticalGroup(
+            jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 12, Short.MAX_VALUE)
+        );
+
+        getContentPane().add(jPanel8, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 600, 1230, -1));
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
@@ -1095,13 +1107,13 @@ public class System extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel5;
     private javax.swing.JPanel jPanel6;
     private javax.swing.JPanel jPanel7;
+    private javax.swing.JPanel jPanel8;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JScrollPane jScrollPane4;
     private javax.swing.JScrollPane jScrollPane5;
     private javax.swing.JTabbedPane jTabbedPane1;
-    private javax.swing.JTextField jTextField2;
     private javax.swing.JTextField jTextField23;
     private javax.swing.JTextField jTextField24;
     private javax.swing.JTextField jTextField25;
