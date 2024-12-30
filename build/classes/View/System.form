@@ -277,13 +277,15 @@
                                   <Component id="jLabel6" alignment="3" min="-2" max="-2" attributes="0"/>
                               </Group>
                               <EmptySpace min="-2" pref="11" max="-2" attributes="0"/>
-                              <Group type="103" groupAlignment="3" attributes="0">
-                                  <Component id="txtCodeSold" alignment="3" min="-2" max="-2" attributes="0"/>
-                                  <Component id="txtDescSold" alignment="3" min="-2" max="-2" attributes="0"/>
-                                  <Component id="txtAmountSold" alignment="3" min="-2" max="-2" attributes="0"/>
-                                  <Component id="txtPriceSold" alignment="3" min="-2" max="-2" attributes="0"/>
-                                  <Component id="txtStockAvail" alignment="3" min="-2" max="-2" attributes="0"/>
+                              <Group type="103" groupAlignment="0" attributes="0">
                                   <Component id="txtIdPROD" alignment="0" max="32767" attributes="0"/>
+                                  <Group type="103" groupAlignment="3" attributes="0">
+                                      <Component id="txtCodeSold" alignment="3" min="-2" max="-2" attributes="0"/>
+                                      <Component id="txtDescSold" alignment="3" min="-2" max="-2" attributes="0"/>
+                                      <Component id="txtAmountSold" alignment="3" min="-2" max="-2" attributes="0"/>
+                                      <Component id="txtPriceSold" alignment="3" min="-2" max="-2" attributes="0"/>
+                                      <Component id="txtStockAvail" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  </Group>
                               </Group>
                           </Group>
                           <Component id="jLabel7" min="-2" max="-2" attributes="0"/>
@@ -291,7 +293,6 @@
                       </Group>
                       <EmptySpace type="unrelated" max="-2" attributes="0"/>
                       <Component id="jScrollPane1" min="-2" pref="252" max="-2" attributes="0"/>
-                      <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
                           <Group type="102" alignment="0" attributes="0">
                               <EmptySpace min="0" pref="3" max="32767" attributes="0"/>
@@ -789,10 +790,7 @@
                               </Group>
                               <EmptySpace min="-2" max="-2" attributes="0"/>
                               <Group type="103" groupAlignment="0" max="-2" attributes="0">
-                                  <Group type="102" alignment="0" attributes="0">
-                                      <Component id="txtCUITProv" min="-2" pref="121" max="-2" attributes="0"/>
-                                      <EmptySpace min="-2" pref="29" max="-2" attributes="0"/>
-                                  </Group>
+                                  <Component id="txtCUITProv" alignment="0" min="-2" pref="121" max="-2" attributes="0"/>
                                   <Component id="txtNameProv" alignment="0" max="32767" attributes="0"/>
                                   <Component id="txtPhoneProv" alignment="0" max="32767" attributes="0"/>
                                   <Component id="txtAddressProv" alignment="0" max="32767" attributes="0"/>
