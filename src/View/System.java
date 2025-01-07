@@ -4,18 +4,60 @@
  */
 package View;
 
+import DAO.ClienteDAO;
+import Model.Cliente;
+import java.util.List;
+import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
+
 /**
  *
  * @author Nahue
  */
 public class System extends javax.swing.JFrame {
 
+    
+    
+    //Inicialize Client and ClientDAO
+    
+    Cliente cl = new Cliente();
+    ClienteDAO client= new ClienteDAO();
+    
+    DefaultTableModel modelo= new DefaultTableModel();    
+    //get Lista clientes
+    public void ListarCliente(){
+        //list clients 
+        List<Cliente> ListarCl= client.ListaCliente();
+        //create model for table
+        modelo= (DefaultTableModel) tableClients.getModel();
+        Object[]ob= new Object[6];
+        //Charge list int the table, using for
+        for (int i = 0; i < ListarCl.size(); i++) {
+           ob[0]= ListarCl.get(i).getId();
+           ob[1]= ListarCl.get(i).getDni();
+           ob[2]= ListarCl.get(i).getNombre();
+           ob[3]= ListarCl.get(i).getTelefono();
+           ob[4]= ListarCl.get(i).getDireccion();
+           ob[5]= ListarCl.get(i).getRazon();
+           modelo.addRow(ob);
+        }
+        tableClients.setModel(modelo);
+    }
+    //Limpiar tabla
+    public void LimpiarTabla(){
+        for (int i = 0; i < modelo.getRowCount(); i++) {
+            modelo.removeRow(i);
+            i= i-1;
+            
+        }
+    }
     /**
      * Creates new form System
      */
     public System() {
         initComponents();
-        this.setLocationRelativeTo(jPanel1);
+        this.setLocationRelativeTo(null);
+        txtIdClient.setVisible(false);
     }
 
     /**
@@ -158,6 +200,11 @@ public class System extends javax.swing.JFrame {
         jButton2.setFont(new java.awt.Font("Tahoma", 1, 13)); // NOI18N
         jButton2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Img/Clientes.png"))); // NOI18N
         jButton2.setText("Client");
+        jButton2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton2ActionPerformed(evt);
+            }
+        });
 
         jButton3.setFont(new java.awt.Font("Tahoma", 1, 13)); // NOI18N
         jButton3.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Img/proveedor.png"))); // NOI18N
@@ -406,22 +453,24 @@ public class System extends javax.swing.JFrame {
 
         tableClients.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null}
+
             },
             new String [] {
-                "DNI/CUIT", "NAME", "PHONE", "ADDRESS", "COMPANY NAME"
+                "ID", "DNI/CUIT", "NOMBRE", "TELEFONO", "DIRECCION", "RAZON"
             }
         ));
+        tableClients.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                tableClientsMouseClicked(evt);
+            }
+        });
         jScrollPane2.setViewportView(tableClients);
         if (tableClients.getColumnModel().getColumnCount() > 0) {
-            tableClients.getColumnModel().getColumn(0).setPreferredWidth(50);
-            tableClients.getColumnModel().getColumn(1).setPreferredWidth(100);
-            tableClients.getColumnModel().getColumn(2).setPreferredWidth(40);
-            tableClients.getColumnModel().getColumn(3).setPreferredWidth(50);
-            tableClients.getColumnModel().getColumn(4).setPreferredWidth(80);
+            tableClients.getColumnModel().getColumn(1).setPreferredWidth(50);
+            tableClients.getColumnModel().getColumn(2).setPreferredWidth(100);
+            tableClients.getColumnModel().getColumn(3).setPreferredWidth(40);
+            tableClients.getColumnModel().getColumn(4).setPreferredWidth(50);
+            tableClients.getColumnModel().getColumn(5).setPreferredWidth(80);
         }
 
         jLabel17.setFont(new java.awt.Font("Tahoma", 1, 13)); // NOI18N
@@ -434,12 +483,32 @@ public class System extends javax.swing.JFrame {
         });
 
         btnSaveClient.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Img/GuardarTodo.png"))); // NOI18N
+        btnSaveClient.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnSaveClientActionPerformed(evt);
+            }
+        });
 
         btnUpdateClient.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Img/Actualizar (2).png"))); // NOI18N
+        btnUpdateClient.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnUpdateClientActionPerformed(evt);
+            }
+        });
 
         btnDeleteClient.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Img/eliminar.png"))); // NOI18N
+        btnDeleteClient.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnDeleteClientActionPerformed(evt);
+            }
+        });
 
         btnNewClient.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Img/nuevo.png"))); // NOI18N
+        btnNewClient.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnNewClientActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
@@ -1006,6 +1075,88 @@ public class System extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_jButton23ActionPerformed
 
+    private void btnSaveClientActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSaveClientActionPerformed
+        //
+        if (!"".equals(txtDNIClient.getText())|| !"".equals(txtNameClient.getText())|| !"".equals(txtAddressClient.getText())) {
+           //Save data client
+            cl.setDni(Integer.parseInt(txtDNIClient.getText()));
+            cl.setNombre(txtNameClient.getText());
+            cl.setTelefono(Integer.parseInt(txtPhoneClient.getText()));
+            cl.setDireccion(txtAddressClient.getText());
+            cl.setRazon(txtRazonClient.getText());
+            client.RegistroCliente(cl);
+            LimpiarTabla();
+            ListarCliente();
+            JOptionPane.showMessageDialog(null, "El cliente a sido Registrado");
+        }else{
+            JOptionPane.showMessageDialog(null, "Los campos estan vacios");
+        }
+    }//GEN-LAST:event_btnSaveClientActionPerformed
+
+    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+       //Call ListarCliente
+       LimpiarTabla();
+       ListarCliente();
+       jTabbedPane1.setSelectedIndex(1);
+    }//GEN-LAST:event_jButton2ActionPerformed
+
+    private void tableClientsMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tableClientsMouseClicked
+     //Select content table and charge in the fields 
+     int fila = tableClients.rowAtPoint(evt.getPoint());
+     txtIdClient.setText(tableClients.getValueAt(fila, 0).toString());
+     txtDNIClient.setText(tableClients.getValueAt(fila, 1).toString());
+     txtNameClient.setText(tableClients.getValueAt(fila, 2).toString());
+     txtPhoneClient.setText(tableClients.getValueAt(fila, 3).toString());
+     txtAddressClient.setText(tableClients.getValueAt(fila, 4).toString());
+     txtRazonClient.setText(tableClients.getValueAt(fila, 5).toString());
+     
+    }//GEN-LAST:event_tableClientsMouseClicked
+
+    private void btnDeleteClientActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDeleteClientActionPerformed
+        //Delete event
+        if (!"".equals(txtDNIClient.getText())|| !"".equals(txtNameClient.getText())|| !"".equals(txtAddressClient.getText())){
+            int pregunta = JOptionPane.showConfirmDialog(null, "¿Esta seguro de eliminar el clinete?");
+            if( pregunta == 0){
+                int id= Integer.parseInt(txtIdClient.getText());
+                client.EliminarCliente(id);
+                       LimpiarTabla();
+                       LimpiarCliente();
+                       ListarCliente();
+            }
+        }
+    }//GEN-LAST:event_btnDeleteClientActionPerformed
+
+    private void btnUpdateClientActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnUpdateClientActionPerformed
+       //Update clients
+       if("".equals(txtIdClient.getText())){
+           JOptionPane.showMessageDialog(null, "seleccione una fila");
+       }else{
+           
+            if (!"".equals(txtDNIClient.getText())|| !"".equals(txtNameClient.getText())|| !"".equals(txtAddressClient.getText())){
+        //Save data client
+           
+         cl.setDni(Integer.parseInt(txtDNIClient.getText()));
+            cl.setNombre(txtNameClient.getText());
+            cl.setTelefono(Integer.parseInt(txtPhoneClient.getText()));
+            cl.setDireccion(txtAddressClient.getText());
+            cl.setRazon(txtRazonClient.getText());
+            cl.setId(Integer.parseInt(txtIdClient.getText()));
+        
+            client.actualizarCliente(cl);
+            LimpiarTabla();
+            LimpiarCliente();
+            ListarCliente();
+            JOptionPane.showMessageDialog(null, "El cliente a sido Actualizado");
+        }else{
+            JOptionPane.showMessageDialog(null, "Los campos estan vacios");
+        }
+       }
+    }//GEN-LAST:event_btnUpdateClientActionPerformed
+
+    private void btnNewClientActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnNewClientActionPerformed
+       LimpiarCliente();
+    }//GEN-LAST:event_btnNewClientActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -1153,4 +1304,14 @@ public class System extends javax.swing.JFrame {
     private javax.swing.JTextField txtStockAvail;
     private javax.swing.JTextField txtStockProd;
     // End of variables declaration//GEN-END:variables
+
+private void LimpiarCliente(){
+    txtIdClient.setText("");
+    txtDNIClient.setText("");
+    txtNameClient.setText("");
+    txtPhoneClient.setText("");
+    txtAddressClient.setText("");
+    txtRazonClient.setText("");
+}
+
 }
