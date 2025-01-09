@@ -1,8 +1,10 @@
+
+
 package DAO;
 
 import Model.Cliente;
 import Model.Conecction;
-
+import Model.Proveedor;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -14,11 +16,10 @@ import javax.swing.JOptionPane;
 /**
  *
  * @author Nahuel Pierini
- * @Enterprise: FSTailSolution
+* @Enterprise: FSTailSolution
  */
-public class ClienteDAO {
-
-    //Conecction
+public class ProveedorDAO {
+ //Conecction
     Conecction c = new Conecction();
 
     Connection con;
@@ -26,18 +27,19 @@ public class ClienteDAO {
     PreparedStatement ps;
 
     ResultSet rs;
-//register Client
-    public boolean RegistroCliente(Cliente cl) {
-        String sql = "INSERT INTO clientes (dni, nombre, telefono, direccion, razon) VALUES (?,?,?,?,?)";
+    
+    //Register Provider
+    public boolean RegistroProv(Proveedor pr) {
+        String sql = "INSERT INTO proveedor (cuit, nombre, telefono, direccion, razon) VALUES (?,?,?,?,?)";
         try {
             con = c.getConnection();
-//Save into DB Client
+//Save into DB Provider
             ps = con.prepareStatement(sql);
-            ps.setInt(1, cl.getDni());
-            ps.setString(2, cl.getNombre());
-            ps.setInt(3, cl.getTelefono());
-            ps.setString(4, cl.getDireccion());
-            ps.setString(5, cl.getRazon());
+            ps.setInt(1, pr.getCuit());
+            ps.setString(2, pr.getNombre());
+            ps.setInt(3, pr.getTelefono());
+            ps.setString(4, pr.getDireccion());
+            ps.setString(5, pr.getRazon());
             ps.execute();
             
             
@@ -54,44 +56,44 @@ public class ClienteDAO {
             }
         }
     }
-
+    
     // List Client
-    public List ListaCliente(){
-        List<Cliente>ListaCl= new ArrayList();
-        String sql= "SELECT * FROM clientes";
+    public List ListaProveedor(){
+        List<Proveedor>ListaPr= new ArrayList();
+        String sql= "SELECT * FROM proveedor";
         try {
             con= c.getConnection();
             ps = con.prepareStatement(sql);
        
             rs= ps.executeQuery();
             while (rs.next()) {
-                Cliente cl= new Cliente();
+                Proveedor cl= new Proveedor();
                 cl.setId(rs.getInt("id"));
-                cl.setDni(rs.getInt("dni"));
+                cl.setCuit(rs.getInt("cuit"));
                 cl.setNombre(rs.getString("nombre"));
                 cl.setTelefono(rs.getInt("telefono"));
                 cl.setDireccion(rs.getString("direccion"));
                 cl.setRazon(rs.getString("razon"));
-                ListaCl.add(cl);
+                ListaPr.add(cl);
             }
         } catch (SQLException e) {
             System.out.println(e.toString());
         }
-        return ListaCl;
+        return ListaPr;
     }
     
-//Update Client
-public boolean actualizarCliente(Cliente cl){
-String sql= "UPDATE clientes SET dni=?, nombre=?, telefono=?, direccion=?, razon=? WHERE id=?";
+    //Update Client
+public boolean actualizarProveedo( Proveedor pr){
+String sql= "UPDATE proveedor SET cuit=?, nombre=?, telefono=?, direccion=?, razon=? WHERE id=?";
     try {
         ps= con.prepareStatement(sql);
         //data save
-         ps.setInt(1, cl.getDni());
-            ps.setString(2, cl.getNombre());
-            ps.setInt(3, cl.getTelefono());
-            ps.setString(4, cl.getDireccion());
-            ps.setString(5, cl.getRazon());
-            ps.setInt(6, cl.getId());
+         ps.setInt(1, pr.getCuit());
+            ps.setString(2, pr.getNombre());
+            ps.setInt(3, pr.getTelefono());
+            ps.setString(4, pr.getDireccion());
+            ps.setString(5, pr.getRazon());
+            ps.setInt(6, pr.getId());
             ps.execute();
         return true;
     } catch (SQLException e) {
@@ -108,10 +110,9 @@ String sql= "UPDATE clientes SET dni=?, nombre=?, telefono=?, direccion=?, razon
 
 //Delete Client
 
-public boolean EliminarCliente(int id){ 
-    
-String sql= "DELETE FROM clientes WHERE id= ?";
-    try {
+public boolean EliminarProveedor(int id){
+String sql= "DELETE FROM proveedor WHERE id= ?";
+    try { 
         ps= con.prepareStatement(sql);
         ps.setInt(1, id);
         ps.execute();
@@ -129,5 +130,4 @@ String sql= "DELETE FROM clientes WHERE id= ?";
     }
 }
 }
-
 
