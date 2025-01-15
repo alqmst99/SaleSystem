@@ -5,12 +5,15 @@
 package View;
 
 import DAO.ClienteDAO;
+import DAO.ProductoDAO;
 import DAO.ProveedorDAO;
 import Model.Cliente;
+import Model.Producto;
 import Model.Proveedor;
 import java.util.List;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
+import org.jdesktop.swingx.autocomplete.AutoCompleteDecorator;
 
 /**
  *
@@ -23,6 +26,8 @@ public class System extends javax.swing.JFrame {
     ClienteDAO client = new ClienteDAO();
     Proveedor pr = new Proveedor();
     ProveedorDAO prov = new ProveedorDAO();
+    Producto prod = new Producto();
+    ProductoDAO pro = new ProductoDAO();
 
     DefaultTableModel modelo = new DefaultTableModel();
 
@@ -65,6 +70,25 @@ public class System extends javax.swing.JFrame {
         tableProviders.setModel(modelo);
     }
 
+    public void ListarProductos() {
+        //list provider
+        List<Producto> ListarProd = pro.ListaProducto();
+        //create model for table
+        modelo = (DefaultTableModel) tableProviders.getModel();
+        Object[] ob = new Object[6];
+        //Charge list int the table, using for
+        for (int i = 0; i < ListarProd.size(); i++) {
+            ob[0] = ListarProd.get(i).getId();
+            ob[1] = ListarProd.get(i).getCodigo();
+            ob[2] = ListarProd.get(i).getNombre();
+            ob[3] = ListarProd.get(i).getProveedor();
+            ob[4] = ListarProd.get(i).getStock();
+            ob[5] = ListarProd.get(i).getPrecio();
+            modelo.addRow(ob);
+        }
+        tableProducts.setModel(modelo);
+    }
+
     //Limpiar tabla
     public void LimpiarTabla() {
         for (int i = 0; i < modelo.getRowCount(); i++) {
@@ -81,6 +105,8 @@ public class System extends javax.swing.JFrame {
         initComponents();
         this.setLocationRelativeTo(null);
         txtIdClient.setVisible(false);
+        AutoCompleteDecorator.decorate(cbxProd);
+        pro.CosultaProveedor(cbxProd);
     }
 
     /**
@@ -241,6 +267,11 @@ public class System extends javax.swing.JFrame {
         jButton4.setFont(new java.awt.Font("Tahoma", 1, 13)); // NOI18N
         jButton4.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Img/producto.png"))); // NOI18N
         jButton4.setText("Products");
+        jButton4.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton4ActionPerformed(evt);
+            }
+        });
 
         jButton5.setFont(new java.awt.Font("Tahoma", 1, 13)); // NOI18N
         jButton5.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Img/compras.png"))); // NOI18N
@@ -795,34 +826,51 @@ public class System extends javax.swing.JFrame {
         jLabel26.setText("Code");
 
         btnSaveProd.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Img/GuardarTodo.png"))); // NOI18N
+        btnSaveProd.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnSaveProdActionPerformed(evt);
+            }
+        });
 
         btnUpdateProd.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Img/Actualizar (2).png"))); // NOI18N
+        btnUpdateProd.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnUpdateProdActionPerformed(evt);
+            }
+        });
 
         btnDeleteProd.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Img/eliminar.png"))); // NOI18N
+        btnDeleteProd.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnDeleteProdActionPerformed(evt);
+            }
+        });
 
         btnNewProd.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Img/nuevo.png"))); // NOI18N
 
         tableProducts.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null}
+
             },
             new String [] {
-                "CODE", "DESCRIPTION", "STOCK", "PRICE", "PROVIDER"
+                "ID", "CODE", "DESCRIPTION", "STOCK", "PRICE", "PROVIDER"
             }
         ));
+        tableProducts.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                tableProductsMouseClicked(evt);
+            }
+        });
         jScrollPane4.setViewportView(tableProducts);
         if (tableProducts.getColumnModel().getColumnCount() > 0) {
-            tableProducts.getColumnModel().getColumn(0).setPreferredWidth(50);
-            tableProducts.getColumnModel().getColumn(1).setPreferredWidth(100);
-            tableProducts.getColumnModel().getColumn(2).setPreferredWidth(40);
-            tableProducts.getColumnModel().getColumn(3).setPreferredWidth(50);
-            tableProducts.getColumnModel().getColumn(4).setPreferredWidth(80);
+            tableProducts.getColumnModel().getColumn(1).setPreferredWidth(50);
+            tableProducts.getColumnModel().getColumn(2).setPreferredWidth(100);
+            tableProducts.getColumnModel().getColumn(3).setPreferredWidth(40);
+            tableProducts.getColumnModel().getColumn(4).setPreferredWidth(50);
+            tableProducts.getColumnModel().getColumn(5).setPreferredWidth(80);
         }
 
-        cbxProd.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        cbxProd.setEditable(true);
 
         btnExcelProd.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Img/excel.png"))); // NOI18N
 
@@ -1164,6 +1212,8 @@ public class System extends javax.swing.JFrame {
             if (pregunta == 0) {
                 int id = Integer.parseInt(txtIdClient.getText());
                 client.EliminarCliente(id);
+
+                JOptionPane.showMessageDialog(null, "El cliente a sido Eliminado");
                 LimpiarTabla();
                 LimpiarCliente();
                 ListarCliente();
@@ -1230,7 +1280,7 @@ public class System extends javax.swing.JFrame {
     }//GEN-LAST:event_jButton3ActionPerformed
 
     private void btnUpdateProvActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnUpdateProvActionPerformed
-     //Update providers
+        //Update providers
         if ("".equals(txtIdProv.getText())) {
             JOptionPane.showMessageDialog(null, "seleccione una fila");
         } else {
@@ -1247,7 +1297,7 @@ public class System extends javax.swing.JFrame {
 
                 prov.actualizarProveedo(pr);
                 LimpiarTabla();
-              LimpiarProveedor();
+                LimpiarProveedor();
                 ListarProveedor();
                 JOptionPane.showMessageDialog(null, "El cliente a sido Actualizado");
             } else {
@@ -1257,7 +1307,7 @@ public class System extends javax.swing.JFrame {
     }//GEN-LAST:event_btnUpdateProvActionPerformed
 
     private void tableProvidersMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tableProvidersMouseClicked
-       //Select content table and charge in the fields 
+        //Select content table and charge in the fields 
         int fila = tableProviders.rowAtPoint(evt.getPoint());
         txtIdProv.setText(tableProviders.getValueAt(fila, 0).toString());
         txtCUITProv.setText(tableProviders.getValueAt(fila, 1).toString());
@@ -1274,12 +1324,99 @@ public class System extends javax.swing.JFrame {
             if (pregunta == 0) {
                 int id = Integer.parseInt(txtIdProv.getText());
                 prov.EliminarProveedor(id);
+
+                JOptionPane.showMessageDialog(null, "El proveedor a sido Eliminado");
                 LimpiarTabla();
                 LimpiarProveedor();
                 ListarProveedor();
             }
         }
     }//GEN-LAST:event_btnDeleteProvActionPerformed
+
+    private void btnSaveProdActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSaveProdActionPerformed
+        //Save fields in Producto
+        if (!"".equals(txtCodeProd.getText()) || !"".equals(txtDescProd.getText()) || !"".equals(cbxProd.getSelectedItem()) || !"".equals(txtStockProd.getText()) || !"".equals(txtPriceProd.getText())) {
+            prod.setCodigo(txtCodeProd.getText());
+            prod.setNombre(txtDescProd.getText());
+            prod.setProveedor(cbxProd.getSelectedItem().toString());
+            prod.setStock(Integer.parseInt(txtStockProd.getText()));
+            prod.setPrecio(Double.parseDouble(txtPriceProd.getText()));
+
+            //Send to ProductoDAO
+            pro.CreateProducto(prod);
+            LimpiarTabla();
+            LimpiarProducto();
+            ListarProductos();
+
+            JOptionPane.showMessageDialog(null, "Produto Registrado");
+        } else {
+            JOptionPane.showMessageDialog(null, "Los campos estan vacios");
+        }
+    }//GEN-LAST:event_btnSaveProdActionPerformed
+
+    private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
+        // TODO add your handling code here:
+        LimpiarTabla();
+        LimpiarProducto();
+        ListarProductos();
+
+        jTabbedPane1.setSelectedIndex(3);
+    }//GEN-LAST:event_jButton4ActionPerformed
+
+    private void tableProductsMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tableProductsMouseClicked
+        //Select content table and charge in the fields 
+        int fila = tableProducts.rowAtPoint(evt.getPoint());
+        txtIdPROD.setText(tableProducts.getValueAt(fila, 0).toString());
+        txtCodeProd.setText(tableProducts.getValueAt(fila, 1).toString());
+        txtDescProd.setText(tableProducts.getValueAt(fila, 2).toString());
+        cbxProd.setSelectedItem(tableProducts.getValueAt(fila, 3).toString());
+        txtStockProd.setText(tableProducts.getValueAt(fila, 4).toString());
+        txtPriceProd.setText(tableProducts.getValueAt(fila, 5).toString());
+    }//GEN-LAST:event_tableProductsMouseClicked
+
+    private void btnDeleteProdActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDeleteProdActionPerformed
+        //Delete event
+        if (!"".equals(txtCodeProd.getText()) || !"".equals(txtDescProd.getText()) || !"".equals(cbxProd.getSelectedItem())) {
+            int pregunta = JOptionPane.showConfirmDialog(null, "¿Esta seguro de eliminar el clinete?");
+            if (pregunta == 0) {
+                int id = Integer.parseInt(txtIdPROD.getText());
+                pro.EliminarProducto(id);
+
+                JOptionPane.showMessageDialog(null, "El proveedor a sido Eliminado");
+                LimpiarTabla();
+                LimpiarProducto();
+                ListarProductos();
+            }
+        }
+
+    }//GEN-LAST:event_btnDeleteProdActionPerformed
+
+    private void btnUpdateProdActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnUpdateProdActionPerformed
+        //Update productos
+        if ("".equals(txtIdPROD.getText())) {
+            JOptionPane.showMessageDialog(null, "seleccione una fila");
+        } else {
+
+            if (!"".equals(txtCodeProd.getText()) || !"".equals(txtDescProd.getText()) || !"".equals(cbxProd.getSelectedItem())) {
+                //Save data productos
+
+                prod.setCodigo(txtCodeProd.getText());
+                prod.setNombre(txtDescProd.getText());
+                prod.setProveedor(cbxProd.getSelectedItem().toString());
+                prod.setStock(Integer.parseInt(txtStockProd.getText()));
+                prod.setPrecio(Double.parseDouble(txtPriceProd.getText()));
+                prod.setId(Integer.parseInt(txtIdPROD.getText()));
+
+                pro.actualizarProducto(prod);
+                LimpiarTabla();
+                LimpiarProducto();
+                ListarProductos();
+                JOptionPane.showMessageDialog(null, "El cliente a sido Actualizado");
+            } else {
+                JOptionPane.showMessageDialog(null, "Los campos estan vacios");
+            }
+        }
+    }//GEN-LAST:event_btnUpdateProdActionPerformed
 
     /**
      * @param args the command line arguments
@@ -1438,7 +1575,6 @@ public class System extends javax.swing.JFrame {
         txtRazonClient.setText("");
     }
 
-    
     private void LimpiarProveedor() {
         txtIdProv.setText("");
         txtCUITProv.setText("");
@@ -1446,5 +1582,14 @@ public class System extends javax.swing.JFrame {
         txtPhoneProv.setText("");
         txtAddressProv.setText("");
         txtRazonProv.setText("");
+    }
+
+    private void LimpiarProducto() {
+        txtIdPROD.setText("");
+        txtCodeProd.setText("");
+        txtDescProd.setText("");
+        cbxProd.setSelectedItem(null);
+        txtStockProd.setText("");
+        txtPriceProd.setText("");
     }
 }
