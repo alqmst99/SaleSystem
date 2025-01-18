@@ -128,6 +128,29 @@ String sql= "DELETE FROM clientes WHERE id= ?";
         
     }
 }
+
+//Search Cliente by DNI
+public Cliente BuscarCliente(int dni){
+    Cliente producto = new Cliente();
+    String sql= "SELECT * FROM clientes WHERE dni=?";
+    try {
+        con= c.getConnection();
+         ps= con.prepareStatement(sql);
+         ps.setInt(1, dni);
+         rs= ps.executeQuery();
+         if(rs.next()){
+             producto.setNombre(rs.getString("nombre"));
+             producto.setTelefono(rs.getInt("telefono"));
+             producto.setDireccion(rs.getString("direccion"));
+              producto.setRazon(rs.getString("razon"));
+             
+         }
+        
+    } catch (SQLException e) {
+        System.out.println(e.toString());
+    }
+    return producto;
+}
 }
 
 

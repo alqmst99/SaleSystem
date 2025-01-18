@@ -7,9 +7,16 @@ package View;
 import DAO.ClienteDAO;
 import DAO.ProductoDAO;
 import DAO.ProveedorDAO;
+import DAO.VentasDAO;
 import Model.Cliente;
+import Model.Detalle;
 import Model.Producto;
 import Model.Proveedor;
+import Model.Ventas;
+import Report.Excel;
+import java.awt.Label;
+import java.awt.event.KeyEvent;
+import java.util.ArrayList;
 import java.util.List;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
@@ -28,9 +35,15 @@ public class System extends javax.swing.JFrame {
     ProveedorDAO prov = new ProveedorDAO();
     Producto prod = new Producto();
     ProductoDAO pro = new ProductoDAO();
+    Ventas ven= new Ventas();
+    VentasDAO v= new VentasDAO();
+    Detalle dv= new Detalle();
 
     DefaultTableModel modelo = new DefaultTableModel();
+    DefaultTableModel tmp = new DefaultTableModel();
 
+       int item ;
+       double totalPagar= 0.0;
     //get Lista clientes
     public void ListarCliente() {
         //list clients 
@@ -105,8 +118,13 @@ public class System extends javax.swing.JFrame {
         initComponents();
         this.setLocationRelativeTo(null);
         txtIdClient.setVisible(false);
+        txtIdSolds.setVisible(false);
+        txtIdProd.setVisible(false);
+        txtIdProv.setVisible(false);
+        txtIdPROD.setVisible(false);
         AutoCompleteDecorator.decorate(cbxProd);
         pro.CosultaProveedor(cbxProd);
+     
     }
 
     /**
@@ -126,6 +144,7 @@ public class System extends javax.swing.JFrame {
         jButton5 = new javax.swing.JButton();
         jButton6 = new javax.swing.JButton();
         jLabel2 = new javax.swing.JLabel();
+        LabelVendedor = new javax.swing.JLabel();
         jLabel1 = new javax.swing.JLabel();
         jTabbedPane1 = new javax.swing.JTabbedPane();
         jPanel2 = new javax.swing.JPanel();
@@ -290,6 +309,9 @@ public class System extends javax.swing.JFrame {
         jLabel2.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Img/logo-fst.png"))); // NOI18N
 
+        LabelVendedor.setFont(new java.awt.Font("Dialog", 1, 13)); // NOI18N
+        LabelVendedor.setText("FSTailSolutions");
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -301,12 +323,18 @@ public class System extends javax.swing.JFrame {
             .addComponent(jButton5, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addComponent(jButton6, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(LabelVendedor, javax.swing.GroupLayout.PREFERRED_SIZE, 107, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(58, 58, 58))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 196, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 167, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(LabelVendedor)
+                .addGap(14, 14, 14)
                 .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -318,13 +346,19 @@ public class System extends javax.swing.JFrame {
                 .addComponent(jButton5, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jButton6, javax.swing.GroupLayout.PREFERRED_SIZE, 48, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(73, Short.MAX_VALUE))
+                .addContainerGap(70, Short.MAX_VALUE))
         );
 
         getContentPane().add(jPanel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 230, 600));
 
         jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Img/encabezado.png"))); // NOI18N
         getContentPane().add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(230, 0, 1000, 180));
+
+        txtCodeSold.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                txtCodeSoldKeyPressed(evt);
+            }
+        });
 
         txtDescSold.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -341,6 +375,12 @@ public class System extends javax.swing.JFrame {
         jLabel5.setFont(new java.awt.Font("Tahoma", 0, 13)); // NOI18N
         jLabel5.setText("Amount");
 
+        txtAmountSold.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                txtAmountSoldKeyPressed(evt);
+            }
+        });
+
         jLabel6.setFont(new java.awt.Font("Tahoma", 0, 13)); // NOI18N
         jLabel6.setText("Price");
 
@@ -351,13 +391,15 @@ public class System extends javax.swing.JFrame {
         btnDeleteSold.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Img/eliminar.png"))); // NOI18N
         btnDeleteSold.setBorder(null);
         btnDeleteSold.setBorderPainted(false);
+        btnDeleteSold.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnDeleteSoldActionPerformed(evt);
+            }
+        });
 
         tableSolds.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null}
+
             },
             new String [] {
                 "CODE", "DESCRIPTION", "AMOUNT", "PRICE", "TOTAL"
@@ -378,6 +420,12 @@ public class System extends javax.swing.JFrame {
         jLabel9.setFont(new java.awt.Font("Tahoma", 0, 13)); // NOI18N
         jLabel9.setText("NAME");
 
+        txtCUITClientSold.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                txtCUITClientSoldKeyPressed(evt);
+            }
+        });
+
         jLabel10.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
         jLabel10.setText("-----");
 
@@ -386,6 +434,11 @@ public class System extends javax.swing.JFrame {
         jLabel11.setText("Total to Pay");
 
         btnGenerateSold.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Img/print.png"))); // NOI18N
+        btnGenerateSold.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnGenerateSoldActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
@@ -873,6 +926,11 @@ public class System extends javax.swing.JFrame {
         cbxProd.setEditable(true);
 
         btnExcelProd.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Img/excel.png"))); // NOI18N
+        btnExcelProd.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnExcelProdActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel5Layout = new javax.swing.GroupLayout(jPanel5);
         jPanel5.setLayout(jPanel5Layout);
@@ -1125,7 +1183,7 @@ public class System extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        // TODO add your handling code here:
+        jTabbedPane1.setSelectedIndex(0);
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed
@@ -1418,6 +1476,120 @@ public class System extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_btnUpdateProdActionPerformed
 
+    private void btnExcelProdActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnExcelProdActionPerformed
+        // Call Execel Report
+        Excel.reporte();
+    }//GEN-LAST:event_btnExcelProdActionPerformed
+
+    private void txtCodeSoldKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtCodeSoldKeyPressed
+        //Search producto with code number
+        if (evt.getKeyCode() == KeyEvent.VK_ENTER) {
+            if (!"".equals(txtCodeSold.getText())) {
+                String cod = txtCodeSold.getText();
+                prod = pro.searchPro(cod);
+                if (prod.getNombre() != null) {
+                    txtDescSold.setText("" + prod.getNombre());
+                    txtPriceSold.setText("" + prod.getPrecio());
+                    txtStockAvail.setText("" + prod.getStock());
+                    txtAmountSold.requestFocus();
+                } else {
+                    LimpiarVentana();
+                    txtAmountSold.requestFocus();
+                }
+            } else {
+                JOptionPane.showMessageDialog(null, "Ingrese el codigo del produto");
+                txtCodeSold.requestFocus();
+            }
+        }
+    }//GEN-LAST:event_txtCodeSoldKeyPressed
+
+    private void txtAmountSoldKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtAmountSoldKeyPressed
+        //Send Cantidad
+        if (evt.getKeyCode() == KeyEvent.VK_ENTER) {
+            if (!"".equals(txtAmountSold.getText())) {
+                String cod = txtCodeSold.getText();
+                String desc = txtDescSold.getText();
+                int cant = Integer.parseInt(txtAmountSold.getText());
+                double precio = Double.parseDouble(txtPriceSold.getText());
+//calculate total
+                double total = cant * precio;
+                int stock= Integer.parseInt(txtStockAvail.getText());
+                if(stock >= cant){
+                    item = item + 1;
+                 tmp = (DefaultTableModel) tableSolds.getModel();
+                    //Bucle raid list
+                    for (int i = 0; i < tableSolds.getRowCount(); i++) {
+                        if(tableSolds.getValueAt(i, 1).equals(txtDescSold.getText())){
+                            JOptionPane.showMessageDialog(null, "El produto ya esta registrado");
+                            return;
+                        }
+                        
+                    }
+                    ArrayList lista = new ArrayList();
+                     lista.add(item);
+                     lista.add(cod);
+                     lista.add(desc);
+                     lista.add(cant);
+                     lista.add(precio);
+                     lista.add(total);
+                     Object[] ob= new Object[5];
+                     ob[0]=lista.get(1);
+                     ob[1]=lista.get(2);
+                     ob[2]=lista.get(3);
+                     ob[3]=lista.get(4);
+                     ob[4]=lista.get(5);
+                    tmp.addRow(ob);
+                    tableSolds.setModel(tmp);
+                    totalPagar();
+                    LimpiarVentana();
+                    txtCodeSold.requestFocus();
+                }else{
+                    JOptionPane.showMessageDialog(null, "Stock no disponible");
+                }
+            }else{
+                      JOptionPane.showMessageDialog(null, "Ingrese cantidad");  
+                        }
+        }
+    }//GEN-LAST:event_txtAmountSoldKeyPressed
+
+    private void btnDeleteSoldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDeleteSoldActionPerformed
+        // Delete product in the solds list
+        modelo= (DefaultTableModel)tableSolds.getModel();
+        modelo.removeRow(tableSolds.getSelectedRow());
+        totalPagar();
+        txtCodeSold.requestFocus();
+    }//GEN-LAST:event_btnDeleteSoldActionPerformed
+
+    private void txtCUITClientSoldKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtCUITClientSoldKeyPressed
+        //Search Cliente
+        if(evt.getKeyCode()== KeyEvent.VK_ENTER){
+            
+            if (!"".equals(txtCUITClientSold.getText())) {
+                int dni= Integer.parseInt(txtCUITClientSold.getText());
+                cl= client.BuscarCliente(dni);
+                if(cl.getNombre() != null){
+                    txtNameClientSold.setText(""+cl.getNombre());
+                    txtPhoneCV.setText(""+cl.getTelefono());
+                    txtAddressCV.setText(""+cl.getDireccion());
+                    txtRazonCV.setText(""+cl.getRazon());
+                }else{
+                    txtCUITClientSold.setText("");
+                    JOptionPane.showMessageDialog(null, "El cliente no existe");
+                }
+                
+            }
+        }
+    }//GEN-LAST:event_txtCUITClientSoldKeyPressed
+
+    private void btnGenerateSoldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGenerateSoldActionPerformed
+        // Event button Register venta
+        RegisterVenta();
+        RegistrarDetalle();
+        ActualizarStock();
+        LimpiarTVentas();
+       limpiarClienteVenta();
+    }//GEN-LAST:event_btnGenerateSoldActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -1454,6 +1626,7 @@ public class System extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JLabel LabelVendedor;
     private javax.swing.JButton btnDeleteClient;
     private javax.swing.JButton btnDeleteProd;
     private javax.swing.JButton btnDeleteProv;
@@ -1566,6 +1739,7 @@ public class System extends javax.swing.JFrame {
     private javax.swing.JTextField txtStockProd;
     // End of variables declaration//GEN-END:variables
 
+    //Clear fields Cliente
     private void LimpiarCliente() {
         txtIdClient.setText("");
         txtDNIClient.setText("");
@@ -1574,7 +1748,7 @@ public class System extends javax.swing.JFrame {
         txtAddressClient.setText("");
         txtRazonClient.setText("");
     }
-
+//Clear Fields proveedor
     private void LimpiarProveedor() {
         txtIdProv.setText("");
         txtCUITProv.setText("");
@@ -1583,7 +1757,7 @@ public class System extends javax.swing.JFrame {
         txtAddressProv.setText("");
         txtRazonProv.setText("");
     }
-
+//Clear fields Producto
     private void LimpiarProducto() {
         txtIdPROD.setText("");
         txtCodeProd.setText("");
@@ -1591,5 +1765,87 @@ public class System extends javax.swing.JFrame {
         cbxProd.setSelectedItem(null);
         txtStockProd.setText("");
         txtPriceProd.setText("");
+    }
+    
+    //Method sum total
+    private void totalPagar(){
+        totalPagar= 0.0;
+        int numFila= tableSolds.getRowCount();
+        for(int i = 0; i< numFila; i++){
+            double cal= Double.parseDouble(String.valueOf(tableSolds.getModel().getValueAt(i, 4)));
+            totalPagar= totalPagar + cal;
+        }
+        jLabel10.setText(String.format("%.2f", totalPagar));
+        
+    }
+    
+    //Clear window Ventas
+    private void LimpiarVentana(){
+        txtCodeSold.setText("");
+        txtDescSold.setText("");
+        txtAmountSold.setText("");
+        txtStockAvail.setText("");
+        txtPriceSold.setText("");
+        txtIdSolds.setText("");
+        
+    }
+    
+   //Register Venta function Method
+    private void RegisterVenta(){
+        String Cliente = txtNameClientSold.getText();
+        String vendedor = LabelVendedor.getText();
+        double monto= totalPagar;
+        ven.setCliente(Cliente);
+        ven.setVendedor(vendedor);
+        ven.setTotal(monto);
+        v.RegistroCliente(ven);
+    }
+    //register Detalle Venta
+    public void RegistrarDetalle(){
+        
+        //Max id ventas
+        int id= v.MaxVenta();
+        
+      //Scroll through the list to register 
+        for (int i = 0; i < tableSolds.getRowCount(); i++) {
+            String cod= tableSolds.getValueAt(i, 0).toString();
+            int cant= Integer.parseInt(tableSolds.getValueAt(i, 2).toString());
+            double precio= Double.parseDouble(tableSolds.getValueAt(i, 3).toString());
+
+            dv.setCod_pro(cod);
+            dv.setCantidad(cant);
+            dv.setPrecio(precio);
+            dv.setId(id);
+            v.RegistrarDetalleVenta(dv);
+        }
+    }
+    
+    //Update Stock
+    private void ActualizarStock(){
+        for (int i = 0; i < tableSolds.getRowCount(); i++) {
+            String cod = tableSolds.getValueAt(i, 0).toString();
+            int cant= Integer.parseInt(tableSolds.getValueAt(i, 2).toString());
+            prod = pro.searchPro(cod);
+            int StockActual = prod.getStock()-cant;
+            v.ActualizarStock(cant, cod);
+        }
+ 
+    }
+   
+    //Clean table Ventas
+    private void LimpiarTVentas(){
+        tmp=(DefaultTableModel) tableSolds.getModel();
+        int fila= tableSolds.getRowCount();
+        for (int i = 0; i < fila; i++) {
+            tmp.removeRow(0);
+        }
+    }
+    
+    private void limpiarClienteVenta(){
+         txtCUITClientSold.setText("");
+        txtNameClientSold.setText("");
+        txtPhoneCV.setText("");
+        txtAddressCV.setText("");
+        txtRazonCV.setText("");
     }
 }

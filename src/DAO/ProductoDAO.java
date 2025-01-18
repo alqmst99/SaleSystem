@@ -147,4 +147,28 @@ String sql= "DELETE FROM productos WHERE id= ?";
      
      
 }
+
+
+//Search Producto by code
+
+public Producto searchPro(String cod){
+    Producto producto = new Producto();
+    String sql= "SELECT * FROM productos WHERE codigo=?";
+    try {
+        con= c.getConnection();
+         ps= con.prepareStatement(sql);
+         ps.setString(1, cod);
+         rs= ps.executeQuery();
+         if(rs.next()){
+             producto.setNombre(rs.getString("nombre"));
+             producto.setPrecio(rs.getDouble("precio"));
+             producto.setStock(rs.getInt("stock"));
+         }
+        
+    } catch (SQLException e) {
+        System.out.println(e.toString());
+    }
+    return producto;
+}
+
 }
