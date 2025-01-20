@@ -6,6 +6,7 @@
 package DAO;
 
 import Model.Conecction;
+import Model.Config;
 import Model.Producto;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -169,6 +170,58 @@ public Producto searchPro(String cod){
         System.out.println(e.toString());
     }
     return producto;
+}
+
+ //Search Datos by config
+    public Config searchDatos() {
+        Config conf = new Config();
+        String sql = "SELECT * FROM config ";
+        try {
+            con = c.getConnection();
+            ps = con.prepareStatement(sql);
+           
+            rs = ps.executeQuery();
+            if (rs.next()) {
+                conf.setId(rs.getInt("id"));
+                conf.setCuit(rs.getInt("cuit"));
+                conf.setNombre(rs.getString("nombre"));
+                conf.setTelefono(rs.getInt("telefono"));
+                conf.setDireccion(rs.getString("direccion"));
+                conf.setRazon(rs.getString("razon"));
+            }
+
+        } catch (SQLException e) {
+            System.out.println(e.toString());
+        }
+        return conf;
+    }
+    
+    
+      //Update Datos in Config
+ 
+public boolean actualizarDatos(Config conf){
+String sql= "UPDATE config SET cuit=?, nombre=?, telefono=?,direccion=?, razon=? WHERE id=?";
+    try {
+        ps= con.prepareStatement(sql);
+        //data save
+         ps.setInt(1, conf.getCuit());
+            ps.setString(2, conf.getNombre());
+            ps.setInt(3, conf.getTelefono());
+            ps.setString(4, conf.getDireccion());
+            ps.setString(5, conf.getRazon());
+            ps.setInt(6, conf.getId());
+            ps.execute();
+        return true;
+    } catch (SQLException e) {
+        System.out.println(e.toString());
+        return false;
+    }finally{
+        try {
+            con.close();
+        } catch (SQLException e) {
+            System.out.println(e.toString());
+        }
+    }
 }
 
 }
