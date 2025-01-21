@@ -13,17 +13,20 @@ public class Login {
     private String nombre;
     private String email;
     private String password;
+    private String rol;
     
     
     //constructor
 
-    public Login(int id, String nombre, String email, String password) {
+    public Login(int id, String nombre, String email, String password, String rol) {
         this.id = id;
         this.nombre = nombre;
         this.email = email;
         this.password = password;
+        this.rol= rol;
     }
     //Void Constructor
+
 
     public Login() {
     }
@@ -65,5 +68,12 @@ public class Login {
     }
     
     
+    public String getRol() {
+        return rol;
+    }
+
+    public void setRol(String rol) {
+        this.rol = rol;
+    }
     
 }
