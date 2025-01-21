@@ -33,7 +33,7 @@ public class VentasDAO {
 //register Client
 
     public int RegistroCliente(Ventas v) {
-        String sql = "INSERT INTO ventas (cliente, vendedor, total) VALUES (?,?,?)";
+        String sql = "INSERT INTO ventas (cliente, vendedor, total, fecha) VALUES (?,?,?,?)";
         try {
             con = c.getConnection();
 //Save into DB Client
@@ -41,6 +41,7 @@ public class VentasDAO {
             ps.setString(1, v.getCliente());
             ps.setString(2, v.getVendedor());
             ps.setDouble(3, v.getTotal());
+            ps.setString(4, v.getFecha());
 
             ps.execute();
 
